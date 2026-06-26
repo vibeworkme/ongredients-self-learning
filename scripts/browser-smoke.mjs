@@ -77,6 +77,11 @@ try {
           el.dispatchEvent(new Event("input", { bubbles: true }));
         };
         localStorage.removeItem('ongredientsConceptWorkbook');
+        document.querySelector('[data-action="reset"]').click();
+        const emptyStateOk =
+          document.querySelectorAll('.empty-prompt-card').length === 2 &&
+          document.querySelectorAll('.image-prompt-card').length === 0 &&
+          document.querySelector('#finalOutput').textContent.includes('아직 작성된 내용이 없습니다');
         document.querySelector('[data-action="fill-example"]').click();
         set('[data-field="setName"]', '비우고 채우는 광채 케어 세트');
         set('[data-field="products"]', '클렌징폼 50ml + 카밍 로션 220ml');
@@ -94,14 +99,15 @@ try {
         const nav = performance.getEntriesByType('navigation')[0];
         return {
           anchorsOk,
+          emptyStateOk,
           promptButtons: document.querySelectorAll('[data-prompt]').length,
           hasBeginnerGuide: document.body.textContent.includes('처음이라면 이 순서만 따라 하세요'),
           progress: document.querySelector('#progressValue').textContent,
           finalIncludesSet: output.includes('비우고 채우는 광채 케어 세트'),
           finalIncludesScore: output.includes('5/5'),
-          finalIncludesImagePrompts: output.includes('PACKAGE IMAGE PROMPT 1') && output.includes('GOODS IMAGE PROMPT 3'),
           imagePromptCards: document.querySelectorAll('.image-prompt-card').length,
           imagePromptButtons: document.querySelectorAll('[data-image-prompt]').length,
+          imagePromptTextVisible: document.body.textContent.includes('패키지 1: 정면 히어로 목업') && document.body.textContent.includes('굿즈 3: 패키지와 함께 보이는 구성'),
           outputPreview: output.slice(0, 220),
           stored: localStorage.getItem('ongredientsConceptWorkbook')?.includes('비우고 채우는 광채 케어 세트') || false,
           loadMs: Math.round(nav ? nav.duration : 0),
@@ -115,12 +121,13 @@ try {
   const value = result.result.value;
   const failures = [];
   if (!value.anchorsOk) failures.push("내부 앵커 링크 검증 실패");
+  if (!value.emptyStateOk) failures.push("빈 상태 안내 검증 실패");
   if (value.promptButtons < 4) failures.push("프롬프트 복사 버튼 검증 실패");
   if (!value.hasBeginnerGuide) failures.push("초보자 안내 영역 검증 실패");
   if (!value.finalIncludesSet || !value.finalIncludesScore) {
     failures.push(`최종안 생성 검증 실패: ${value.outputPreview}`);
   }
-  if (!value.finalIncludesImagePrompts || value.imagePromptCards !== 6 || value.imagePromptButtons !== 6) {
+  if (!value.imagePromptTextVisible || value.imagePromptCards !== 6 || value.imagePromptButtons !== 6) {
     failures.push("이미지 프롬프트 6개 생성 검증 실패");
   }
   if (!value.stored) failures.push("자동 저장 검증 실패");

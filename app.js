@@ -33,6 +33,10 @@ function fieldValue(key, fallback) {
   return state.fields[key] || fallback;
 }
 
+function hasMeaningfulInput() {
+  return Object.values(state.fields).some(Boolean) || checks.some((check) => check.checked);
+}
+
 function currentPlanText() {
   return [
     `세트명: ${fieldValue("setName", "아직 정하지 못함")}`,
@@ -152,6 +156,10 @@ function createImagePrompts() {
 }
 
 function imagePromptText() {
+  if (!hasMeaningfulInput()) {
+    return "아직 이미지 프롬프트가 없습니다. 예시 자동 채우기를 누르거나 1단계부터 입력해보세요.";
+  }
+
   const { packagePrompts, goodsPrompts } = createImagePrompts();
   return [
     "패키지 디자인 이미지 프롬프트 3개",
@@ -164,6 +172,15 @@ function imagePromptText() {
 
 function renderPromptCards(container, prompts, type) {
   container.replaceChildren();
+
+  if (!hasMeaningfulInput()) {
+    const empty = document.createElement("article");
+    empty.className = "empty-prompt-card";
+    empty.textContent = "아직 입력된 내용이 없습니다. 예시 자동 채우기를 누르거나 1단계부터 입력하면 이곳에 프롬프트가 만들어집니다.";
+    container.append(empty);
+    return;
+  }
+
   prompts.forEach((prompt, index) => {
     const article = document.createElement("article");
     article.className = "image-prompt-card";
@@ -237,13 +254,13 @@ function progressMessage(percent) {
   return "완성되었습니다. 이미지 프롬프트를 복사해 이미지 생성 도구에 넣어보세요.";
 }
 
-function createFinalText() {
+function createSummaryText() {
   const get = fieldValue;
   const checked = checks.filter((check) => check.checked).length;
   const validationScore = `${checked}/5`;
 
-  if (!Object.values(state.fields).some(Boolean) && checked === 0) {
-    return "아직 작성된 내용이 없습니다. Part 1부터 입력해보세요.";
+  if (!hasMeaningfulInput()) {
+    return "아직 작성된 내용이 없습니다.\n\n1. 예시 자동 채우기를 눌러 결과물을 먼저 확인하거나\n2. 1단계부터 제품 정보를 입력해보세요.\n\n입력이 채워지면 패키지 이미지 프롬프트 3개와 굿즈 이미지 프롬프트 3개가 아래에 만들어집니다.";
   }
 
   return [
@@ -263,9 +280,11 @@ function createFinalText() {
     `보완점: ${get("improvement", "미작성")}`,
     "",
     `최종 제출 문장: ${get("setName", "이 세트")}는 ${get("products", "제품 조합")}을 ${get("packageConcept", "패키지 구조")}로 보여주고, ${get("goods", "굿즈")}를 통해 ${get("targetScene", "사용 장면")}을 일상에 남긴다.`,
-    "",
-    imagePromptText(),
   ].join("\n");
+}
+
+function createExportText() {
+  return [createSummaryText(), "", imagePromptText()].join("\n");
 }
 
 function render() {
@@ -274,7 +293,7 @@ function render() {
   progressValue.textContent = String(percent);
   progressBar.style.width = `${percent}%`;
   progressHint.textContent = progressMessage(percent);
-  finalOutput.textContent = createFinalText();
+  finalOutput.textContent = createSummaryText();
   const { packagePrompts, goodsPrompts } = createImagePrompts();
   renderPromptCards(packagePromptList, packagePrompts, "package");
   renderPromptCards(goodsPromptList, goodsPrompts, "goods");
@@ -286,7 +305,7 @@ async function copyText(text) {
 }
 
 function downloadFinalText() {
-  const blob = new Blob([finalOutput.textContent], { type: "text/plain;charset=utf-8" });
+  const blob = new Blob([createExportText()], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
@@ -320,6 +339,10 @@ document.addEventListener("click", (event) => {
   }
 
   if (imagePromptButton) {
+    if (!hasMeaningfulInput()) {
+      showToast("먼저 예시를 채우거나 내용을 입력해주세요.");
+      return;
+    }
     const [type, indexText] = imagePromptButton.dataset.imagePrompt.split(":");
     const index = Number(indexText);
     const { packagePrompts, goodsPrompts } = createImagePrompts();
@@ -355,10 +378,14 @@ document.addEventListener("click", (event) => {
   }
 
   if (actionButton.dataset.action === "copy-final") {
-    copyText(finalOutput.textContent).catch(() => showToast("복사 권한을 확인해주세요."));
+    copyText(createExportText()).catch(() => showToast("복사 권한을 확인해주세요."));
   }
 
   if (actionButton.dataset.action === "copy-image-prompts") {
+    if (!hasMeaningfulInput()) {
+      showToast("먼저 예시를 채우거나 내용을 입력해주세요.");
+      return;
+    }
     copyText(imagePromptText()).catch(() => showToast("복사 권한을 확인해주세요."));
   }
 
