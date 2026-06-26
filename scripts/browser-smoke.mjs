@@ -76,6 +76,7 @@ try {
           el.value = value;
           el.dispatchEvent(new Event("input", { bubbles: true }));
         };
+        localStorage.removeItem('ongredientsConceptWorkbook');
         document.querySelector('[data-action="fill-example"]').click();
         set('[data-field="setName"]', '비우고 채우는 광채 케어 세트');
         set('[data-field="products"]', '클렌징폼 50ml + 카밍 로션 220ml');
@@ -98,6 +99,7 @@ try {
           progress: document.querySelector('#progressValue').textContent,
           finalIncludesSet: output.includes('비우고 채우는 광채 케어 세트'),
           finalIncludesScore: output.includes('5/5'),
+          outputPreview: output.slice(0, 220),
           stored: localStorage.getItem('ongredientsConceptWorkbook')?.includes('비우고 채우는 광채 케어 세트') || false,
           loadMs: Math.round(nav ? nav.duration : 0),
           scrollWidth: document.documentElement.scrollWidth,
@@ -112,7 +114,9 @@ try {
   if (!value.anchorsOk) failures.push("내부 앵커 링크 검증 실패");
   if (value.promptButtons < 4) failures.push("프롬프트 복사 버튼 검증 실패");
   if (!value.hasBeginnerGuide) failures.push("초보자 안내 영역 검증 실패");
-  if (!value.finalIncludesSet || !value.finalIncludesScore) failures.push("최종안 생성 검증 실패");
+  if (!value.finalIncludesSet || !value.finalIncludesScore) {
+    failures.push(`최종안 생성 검증 실패: ${value.outputPreview}`);
+  }
   if (!value.stored) failures.push("자동 저장 검증 실패");
   if (value.loadMs > 2500) failures.push(`초기 로드가 느립니다: ${value.loadMs}ms`);
 
