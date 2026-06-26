@@ -6,6 +6,8 @@ const finalOutput = document.querySelector("#finalOutput");
 const progressValue = document.querySelector("#progressValue");
 const progressBar = document.querySelector("#progressBar");
 const progressHint = document.querySelector("#progressHint");
+const packagePromptList = document.querySelector("#packagePromptList");
+const goodsPromptList = document.querySelector("#goodsPromptList");
 const toast = document.querySelector("#toast");
 
 const state = {
@@ -105,6 +107,86 @@ ${currentPlanText()}
   return prompts[type] || "";
 }
 
+function createImagePrompts() {
+  const setName = fieldValue("setName", "clean skincare routine set");
+  const products = fieldValue("products", "cleanser and lotion skincare products");
+  const routine = fieldValue("routine", "a simple daily skincare routine");
+  const packageConcept = fieldValue("packageConcept", "a clean 2-step tray box that shows product order clearly");
+  const brandSentence = fieldValue("brandSentence", "an honest clean skincare brand focused on gentle skin barrier care");
+  const keywords = fieldValue("keywords", "clean ingredients, skin barrier, glow, calming, clean beauty");
+  const targetScene = fieldValue("targetScene", "morning skincare routine and unboxing moment");
+  const goods = fieldValue("goods", "routine card and silicone hair band");
+  const goodsReason = fieldValue("goodsReason", "helps the user follow the skincare routine naturally");
+
+  const packagePrompts = [
+    {
+      title: "패키지 1: 정면 히어로 목업",
+      text: `Premium cosmetic package design mockup for "${setName}", containing ${products}. Show an open rigid box with a clean tray layout based on "${packageConcept}". The product order should clearly express "${routine}". Use a soft clean beauty mood inspired by ${keywords}. Minimal Korean skincare brand style, warm natural daylight, sage green, soft cream, pale yellow accents, tactile paper texture, realistic shadows, high-end product photography, front three-quarter view, no readable text, no logo, no watermark.`,
+    },
+    {
+      title: "패키지 2: 박스 내부 구조",
+      text: `Top-down packaging structure concept for "${setName}". Design a realistic inner tray for ${products}, with dedicated product slots and a small goods space. The layout must make the skincare routine easy to understand: ${routine}. Use "${packageConcept}" as the main design idea. Clean ingredient-focused Korean cosmetic package, molded pulp tray, soft matte paper, organized STEP 1 and STEP 2 feeling without readable text, elegant minimal color palette, studio lighting, highly realistic render, no logo, no watermark.`,
+    },
+    {
+      title: "패키지 3: 언박싱 장면",
+      text: `Lifestyle unboxing scene of a clean skincare gift set called "${setName}". Show the package opened on a table with ${products} arranged neatly, plus a visible space for ${goods}. The image should communicate "${brandSentence}" and feel suitable for ${targetScene}. Calm clean beauty atmosphere, natural props, soft fabric, paper insert cards, muted sage and cream colors, premium but approachable, editorial product photography, realistic, no readable text, no logo, no watermark.`,
+    },
+  ];
+
+  const goodsPrompts = [
+    {
+      title: "굿즈 1: 굿즈 단독 목업",
+      text: `Realistic goods design mockup for a skincare brand: ${goods}. The goods should support ${products} and the user routine "${routine}". Visual direction: ${keywords}. Clean minimal Korean beauty style, soft cream and sage green palette, practical everyday object, premium small promotional gift, studio flat lay, realistic material texture, no readable text, no logo, no watermark.`,
+    },
+    {
+      title: "굿즈 2: 사용 장면",
+      text: `Lifestyle image showing ${goods} being naturally used during ${targetScene}. The goods should feel useful because ${goodsReason}. Include subtle skincare context with ${products} nearby, calm bathroom or vanity setting, clean beauty mood, soft morning light, gentle skin barrier care atmosphere, realistic photography, warm neutral background, no readable text, no logo, no watermark.`,
+    },
+    {
+      title: "굿즈 3: 패키지와 함께 보이는 구성",
+      text: `Unboxing flat lay showing ${goods} placed together with the skincare package for "${setName}" and ${products}. The composition should make the package and goods feel like one coherent set. Express "${brandSentence}" through clean materials, soft color blocks, routine card, neat slots, gentle glow, calming skincare mood, premium Korean cosmetic gift set photography, high realism, no readable text, no logo, no watermark.`,
+    },
+  ];
+
+  return { packagePrompts, goodsPrompts };
+}
+
+function imagePromptText() {
+  const { packagePrompts, goodsPrompts } = createImagePrompts();
+  return [
+    "패키지 디자인 이미지 프롬프트 3개",
+    ...packagePrompts.map((prompt, index) => `PACKAGE IMAGE PROMPT ${index + 1} - ${prompt.title}\n${prompt.text}`),
+    "",
+    "굿즈 이미지 프롬프트 3개",
+    ...goodsPrompts.map((prompt, index) => `GOODS IMAGE PROMPT ${index + 1} - ${prompt.title}\n${prompt.text}`),
+  ].join("\n\n");
+}
+
+function renderPromptCards(container, prompts, type) {
+  container.replaceChildren();
+  prompts.forEach((prompt, index) => {
+    const article = document.createElement("article");
+    article.className = "image-prompt-card";
+
+    const number = document.createElement("span");
+    number.textContent = String(index + 1).padStart(2, "0");
+
+    const title = document.createElement("strong");
+    title.textContent = prompt.title;
+
+    const text = document.createElement("p");
+    text.textContent = prompt.text;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.imagePrompt = `${type}:${index}`;
+    button.textContent = "이 프롬프트 복사";
+
+    article.append(number, title, text, button);
+    container.append(article);
+  });
+}
+
 function showToast(message) {
   toast.textContent = message;
   toast.classList.add("is-visible");
@@ -152,7 +234,7 @@ function progressMessage(percent) {
   if (percent < 40) return "좋습니다. 제품 조합의 이유가 보이기 시작합니다.";
   if (percent < 75) return "이제 굿즈와 사용 장면을 더 선명하게 연결해보세요.";
   if (percent < 100) return "거의 완성입니다. 검증 체크를 끝내면 제출 문장이 안정됩니다.";
-  return "완성되었습니다. 최종안을 복사해 제출하거나 저장하세요.";
+  return "완성되었습니다. 이미지 프롬프트를 복사해 이미지 생성 도구에 넣어보세요.";
 }
 
 function createFinalText() {
@@ -181,6 +263,8 @@ function createFinalText() {
     `보완점: ${get("improvement", "미작성")}`,
     "",
     `최종 제출 문장: ${get("setName", "이 세트")}는 ${get("products", "제품 조합")}을 ${get("packageConcept", "패키지 구조")}로 보여주고, ${get("goods", "굿즈")}를 통해 ${get("targetScene", "사용 장면")}을 일상에 남긴다.`,
+    "",
+    imagePromptText(),
   ].join("\n");
 }
 
@@ -191,6 +275,9 @@ function render() {
   progressBar.style.width = `${percent}%`;
   progressHint.textContent = progressMessage(percent);
   finalOutput.textContent = createFinalText();
+  const { packagePrompts, goodsPrompts } = createImagePrompts();
+  renderPromptCards(packagePromptList, packagePrompts, "package");
+  renderPromptCards(goodsPromptList, goodsPrompts, "goods");
 }
 
 async function copyText(text) {
@@ -221,6 +308,7 @@ document.addEventListener("change", (event) => {
 document.addEventListener("click", (event) => {
   const copyButton = event.target.closest("[data-copy]");
   const promptButton = event.target.closest("[data-prompt]");
+  const imagePromptButton = event.target.closest("[data-image-prompt]");
   const actionButton = event.target.closest("[data-action]");
 
   if (copyButton) {
@@ -229,6 +317,14 @@ document.addEventListener("click", (event) => {
 
   if (promptButton) {
     copyText(buildPrompt(promptButton.dataset.prompt)).catch(() => showToast("복사 권한을 확인해주세요."));
+  }
+
+  if (imagePromptButton) {
+    const [type, indexText] = imagePromptButton.dataset.imagePrompt.split(":");
+    const index = Number(indexText);
+    const { packagePrompts, goodsPrompts } = createImagePrompts();
+    const list = type === "package" ? packagePrompts : goodsPrompts;
+    copyText(list[index]?.text || "").catch(() => showToast("복사 권한을 확인해주세요."));
   }
 
   if (!actionButton) return;
@@ -260,6 +356,10 @@ document.addEventListener("click", (event) => {
 
   if (actionButton.dataset.action === "copy-final") {
     copyText(finalOutput.textContent).catch(() => showToast("복사 권한을 확인해주세요."));
+  }
+
+  if (actionButton.dataset.action === "copy-image-prompts") {
+    copyText(imagePromptText()).catch(() => showToast("복사 권한을 확인해주세요."));
   }
 
   if (actionButton.dataset.action === "download") {

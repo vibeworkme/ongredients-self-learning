@@ -34,10 +34,12 @@ const promptButtons = [...html.matchAll(/data-prompt="([^"]+)"/g)];
 if (promptButtons.length < 4) fail("AI 프롬프트 복사 버튼이 부족합니다.");
 if (promptButtons.some((match) => match[1].trim().length < 4)) fail("비어 있거나 너무 짧은 프롬프트 키가 있습니다.");
 
-if (!html.includes("완성된 문장을 복사하세요")) fail("최종 제출안 영역이 없습니다.");
+if (!html.includes("패키지 이미지 3개, 굿즈 이미지 3개를 만듭니다")) fail("이미지 프롬프트 출력 영역이 없습니다.");
 if (!js.includes("localStorage")) fail("자동 저장 로직이 없습니다.");
 if (!js.includes("downloadFinalText")) fail("최종안 저장 로직이 없습니다.");
 if (!js.includes("buildPrompt")) fail("동적 프롬프트 생성 로직이 없습니다.");
+if (!js.includes("createImagePrompts")) fail("이미지 프롬프트 생성 로직이 없습니다.");
+if (!html.includes("packagePromptList") || !html.includes("goodsPromptList")) fail("이미지 프롬프트 카드 영역이 없습니다.");
 if (!css.includes("@media (max-width: 640px)")) fail("모바일 대응 CSS가 없습니다.");
 
 const visibleText = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<style[\s\S]*?<\/style>/g, "");

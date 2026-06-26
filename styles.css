@@ -665,6 +665,68 @@ select:focus {
   margin-top: 22px;
 }
 
+.image-output {
+  margin-top: 24px;
+}
+
+.image-output-header {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.image-output-header h3 {
+  font-size: 26px;
+}
+
+.image-prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.image-prompt-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(34, 45, 36, 0.07);
+}
+
+.image-prompt-card span {
+  color: var(--coral);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.image-prompt-card strong {
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.28;
+  font-weight: 950;
+}
+
+.image-prompt-card p {
+  max-height: 260px;
+  overflow: auto;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.52;
+  font-weight: 720;
+}
+
+.image-prompt-card button {
+  min-height: 40px;
+  align-self: end;
+  border: 1px solid var(--leaf);
+  border-radius: 8px;
+  color: #fff;
+  background: var(--leaf);
+  font-weight: 900;
+}
+
 pre {
   min-height: 230px;
   overflow: auto;
@@ -708,7 +770,8 @@ pre {
   .hero,
   .workbench,
   .two-column,
-  .prompt-row {
+  .prompt-row,
+  .image-prompt-grid {
     grid-template-columns: 1fr;
   }
 

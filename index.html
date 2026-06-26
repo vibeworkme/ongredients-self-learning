@@ -70,8 +70,8 @@
           </article>
           <article>
             <span>04</span>
-            <h3>마지막 문장을 복사합니다</h3>
-            <p>아래 입력이 채워지면 제출용 기획안 문장이 자동으로 만들어집니다.</p>
+            <h3>이미지 프롬프트를 복사합니다</h3>
+            <p>아래 입력이 채워지면 패키지 3개, 굿즈 3개 이미지 프롬프트가 자동으로 만들어집니다.</p>
           </article>
         </div>
         <div class="plain-help">
@@ -106,8 +106,8 @@
           </article>
           <article>
             <span>04</span>
-            <h3>4단계: 제출 문장 복사하기</h3>
-            <p>완성된 문장을 복사해서 과제나 발표 자료에 사용합니다.</p>
+            <h3>4단계: 이미지 만들 준비하기</h3>
+            <p>완성된 프롬프트를 복사해 이미지 생성 도구에 붙여 넣습니다.</p>
           </article>
         </div>
       </section>
@@ -289,16 +289,31 @@
             <div class="lesson-header">
               <span class="module-label">Output</span>
               <div>
-                <h2>완성된 문장을 복사하세요</h2>
-                <p>위 칸을 채우면 여기에 제출용 문장이 자동으로 만들어집니다. 이상하면 위로 돌아가 조금만 고치면 됩니다.</p>
+                <h2>패키지 이미지 3개, 굿즈 이미지 3개를 만듭니다</h2>
+                <p>위 칸을 채우면 이미지 생성 도구에 넣을 프롬프트가 자동으로 만들어집니다. 마음에 드는 방향을 하나씩 복사하세요.</p>
               </div>
             </div>
             <div class="final-card">
               <pre id="finalOutput">아직 작성된 내용이 없습니다. Part 1부터 입력해보세요.</pre>
               <div class="final-actions">
-                <button class="button primary" type="button" data-action="copy-final">최종안 복사</button>
+                <button class="button primary" type="button" data-action="copy-final">전체 내용 복사</button>
+                <button class="button secondary" type="button" data-action="copy-image-prompts">이미지 프롬프트 6개 복사</button>
                 <button class="button secondary" type="button" data-action="download">텍스트 저장</button>
               </div>
+            </div>
+            <div class="image-output">
+              <div class="image-output-header">
+                <p class="eyebrow">Package Design</p>
+                <h3>패키지 디자인 이미지 프롬프트 3개</h3>
+              </div>
+              <div class="image-prompt-grid" id="packagePromptList"></div>
+            </div>
+            <div class="image-output">
+              <div class="image-output-header">
+                <p class="eyebrow">Goods Design</p>
+                <h3>굿즈 이미지 프롬프트 3개</h3>
+              </div>
+              <div class="image-prompt-grid" id="goodsPromptList"></div>
             </div>
           </section>
         </div>

@@ -99,6 +99,9 @@ try {
           progress: document.querySelector('#progressValue').textContent,
           finalIncludesSet: output.includes('비우고 채우는 광채 케어 세트'),
           finalIncludesScore: output.includes('5/5'),
+          finalIncludesImagePrompts: output.includes('PACKAGE IMAGE PROMPT 1') && output.includes('GOODS IMAGE PROMPT 3'),
+          imagePromptCards: document.querySelectorAll('.image-prompt-card').length,
+          imagePromptButtons: document.querySelectorAll('[data-image-prompt]').length,
           outputPreview: output.slice(0, 220),
           stored: localStorage.getItem('ongredientsConceptWorkbook')?.includes('비우고 채우는 광채 케어 세트') || false,
           loadMs: Math.round(nav ? nav.duration : 0),
@@ -116,6 +119,9 @@ try {
   if (!value.hasBeginnerGuide) failures.push("초보자 안내 영역 검증 실패");
   if (!value.finalIncludesSet || !value.finalIncludesScore) {
     failures.push(`최종안 생성 검증 실패: ${value.outputPreview}`);
+  }
+  if (!value.finalIncludesImagePrompts || value.imagePromptCards !== 6 || value.imagePromptButtons !== 6) {
+    failures.push("이미지 프롬프트 6개 생성 검증 실패");
   }
   if (!value.stored) failures.push("자동 저장 검증 실패");
   if (value.loadMs > 2500) failures.push(`초기 로드가 느립니다: ${value.loadMs}ms`);
