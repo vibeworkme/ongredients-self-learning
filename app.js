@@ -1,0 +1,164 @@
+const STORAGE_KEY = "ongredientsConceptWorkbook";
+
+const fields = [...document.querySelectorAll("[data-field]")];
+const checks = [...document.querySelectorAll("[data-check]")];
+const finalOutput = document.querySelector("#finalOutput");
+const progressValue = document.querySelector("#progressValue");
+const progressBar = document.querySelector("#progressBar");
+const progressHint = document.querySelector("#progressHint");
+const toast = document.querySelector("#toast");
+
+const state = {
+  fields: {},
+  checks: {},
+};
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
+}
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    state.fields = saved.fields || {};
+    state.checks = saved.checks || {};
+  } catch {
+    state.fields = {};
+    state.checks = {};
+  }
+
+  fields.forEach((field) => {
+    field.value = state.fields[field.dataset.field] || "";
+  });
+  checks.forEach((check) => {
+    check.checked = Boolean(state.checks[check.dataset.check]);
+  });
+}
+
+function saveState() {
+  fields.forEach((field) => {
+    state.fields[field.dataset.field] = field.value.trim();
+  });
+  checks.forEach((check) => {
+    state.checks[check.dataset.check] = check.checked;
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  render();
+}
+
+function filledCount() {
+  const textDone = fields.filter((field) => field.value.trim().length > 0).length;
+  const checkDone = checks.filter((check) => check.checked).length;
+  return { done: textDone + checkDone, total: fields.length + checks.length };
+}
+
+function progressMessage(percent) {
+  if (percent === 0) return "첫 번째 입력부터 천천히 채워보세요.";
+  if (percent < 40) return "좋습니다. 제품 조합의 이유가 보이기 시작합니다.";
+  if (percent < 75) return "이제 굿즈와 사용 장면을 더 선명하게 연결해보세요.";
+  if (percent < 100) return "거의 완성입니다. 검증 체크를 끝내면 제출 문장이 안정됩니다.";
+  return "완성되었습니다. 최종안을 복사해 제출하거나 저장하세요.";
+}
+
+function createFinalText() {
+  const get = (key, fallback) => state.fields[key] || fallback;
+  const checked = checks.filter((check) => check.checked).length;
+  const validationScore = `${checked}/5`;
+
+  if (!Object.values(state.fields).some(Boolean) && checked === 0) {
+    return "아직 작성된 내용이 없습니다. Part 1부터 입력해보세요.";
+  }
+
+  return [
+    `세트명: ${get("setName", "미작성")}`,
+    `제품 구성: ${get("products", "미작성")}`,
+    `루틴 해석: ${get("routine", "미작성")}`,
+    `패키지 역할: ${get("packageRole", "미작성")}`,
+    `패키지 컨셉: ${get("packageConcept", "미작성")}`,
+    "",
+    `브랜드 한 문장: ${get("brandSentence", "미작성")}`,
+    `핵심 키워드: ${get("keywords", "미작성")}`,
+    `타겟 사용 장면: ${get("targetScene", "미작성")}`,
+    `최종 굿즈: ${get("goods", "미작성")}`,
+    `굿즈 선정 이유: ${get("goodsReason", "미작성")}`,
+    "",
+    `통합 검증 점수: ${validationScore}`,
+    `보완점: ${get("improvement", "미작성")}`,
+    "",
+    `최종 제출 문장: ${get("setName", "이 세트")}는 ${get("products", "제품 조합")}을 ${get("packageConcept", "패키지 구조")}로 보여주고, ${get("goods", "굿즈")}를 통해 ${get("targetScene", "사용 장면")}을 일상에 남긴다.`,
+  ].join("\n");
+}
+
+function render() {
+  const progress = filledCount();
+  const percent = Math.round((progress.done / progress.total) * 100);
+  progressValue.textContent = String(percent);
+  progressBar.style.width = `${percent}%`;
+  progressHint.textContent = progressMessage(percent);
+  finalOutput.textContent = createFinalText();
+}
+
+async function copyText(text) {
+  await navigator.clipboard.writeText(text);
+  showToast("복사되었습니다.");
+}
+
+function downloadFinalText() {
+  const blob = new Blob([finalOutput.textContent], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "ongredients-concept-final.txt";
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+document.addEventListener("input", (event) => {
+  if (event.target.matches("[data-field], [data-check]")) saveState();
+});
+
+document.addEventListener("change", (event) => {
+  if (event.target.matches("[data-field], [data-check]")) saveState();
+});
+
+document.addEventListener("click", (event) => {
+  const copyButton = event.target.closest("[data-copy]");
+  const actionButton = event.target.closest("[data-action]");
+
+  if (copyButton) {
+    copyText(copyButton.dataset.copy).catch(() => showToast("복사 권한을 확인해주세요."));
+  }
+
+  if (!actionButton) return;
+
+  if (actionButton.dataset.action === "reset") {
+    localStorage.removeItem(STORAGE_KEY);
+    fields.forEach((field) => {
+      field.value = "";
+    });
+    checks.forEach((check) => {
+      check.checked = false;
+    });
+    state.fields = {};
+    state.checks = {};
+    render();
+    showToast("작성 내용이 초기화되었습니다.");
+  }
+
+  if (actionButton.dataset.action === "copy-final") {
+    copyText(finalOutput.textContent).catch(() => showToast("복사 권한을 확인해주세요."));
+  }
+
+  if (actionButton.dataset.action === "download") {
+    downloadFinalText();
+    showToast("텍스트 파일을 저장했습니다.");
+  }
+});
+
+loadState();
+render();

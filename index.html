@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="패키지와 굿즈 컨셉을 스스로 학습하고 최종 세트 기획안을 완성하는 온그리디언츠 사례 기반 워크북"
+    />
+    <meta name="theme-color" content="#f7f5ed" />
+    <title>온그리디언츠 패키지·굿즈 컨셉 워크북</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="처음으로 이동">
+        <span>O</span>
+        <strong>Concept Workbook</strong>
+      </a>
+      <nav class="top-nav" aria-label="주요 단계">
+        <a href="#package">패키지</a>
+        <a href="#goods">굿즈</a>
+        <a href="#validation">검증</a>
+        <a href="#final">최종안</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Self Learning Course</p>
+          <h1>패키지와 굿즈<br />컨셉을 스스로<br />만들고 검증한다</h1>
+          <p class="lead">
+            제품 조합을 루틴으로 읽고, 브랜드 키워드를 굿즈로 바꾼 뒤, 한 박스 안에서 설득력 있는 세트 기획안으로 정리합니다.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#learn">학습 시작</a>
+            <button class="button secondary" type="button" data-action="reset">작성 내용 초기화</button>
+          </div>
+        </div>
+        <figure class="hero-visual">
+          <img src="./assets/package-system-mockup.png" alt="스킨케어 패키지와 굿즈 공간을 보여주는 목업" />
+          <figcaption>패키지는 조합의 이유를 보이고, 굿즈는 사용 장면을 이어줍니다.</figcaption>
+        </figure>
+      </section>
+
+      <section class="overview" id="learn" aria-labelledby="overview-title">
+        <div>
+          <p class="eyebrow">Course Map</p>
+          <h2 id="overview-title">오늘 완성할 네 가지 결과물</h2>
+        </div>
+        <div class="overview-grid">
+          <article>
+            <span>01</span>
+            <h3>패키지 컨셉</h3>
+            <p>제품 조합이 왜 한 세트인지 루틴 관점으로 설명합니다.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>굿즈 컨셉</h3>
+            <p>브랜드 키워드를 반복 사용 가능한 물건과 장면으로 연결합니다.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>통합 검증</h3>
+            <p>제품, 패키지, 굿즈가 같은 이야기를 하는지 기준표로 확인합니다.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>최종 제출 문장</h3>
+            <p>세트명, 구조, 굿즈, 이유를 한 문장으로 정리합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="workbench" aria-label="학습 워크북">
+        <aside class="progress-panel" aria-label="진행 상황">
+          <div class="progress-card">
+            <p class="eyebrow">Progress</p>
+            <strong><span id="progressValue">0</span>% 완료</strong>
+            <div class="progress-bar" aria-hidden="true"><span id="progressBar"></span></div>
+            <p id="progressHint">첫 번째 입력부터 천천히 채워보세요.</p>
+          </div>
+          <div class="tip-card">
+            <h2>학습 원칙</h2>
+            <ul>
+              <li>패키지와 굿즈를 처음부터 합치지 않습니다.</li>
+              <li>패키지 컨셉을 먼저 만든 뒤 굿즈를 붙입니다.</li>
+              <li>AI는 후보를 넓히고 비교하는 도구로 씁니다.</li>
+              <li>최종 판단은 루틴, 치수, 단가, 제작 가능성으로 합니다.</li>
+            </ul>
+          </div>
+        </aside>
+
+        <div class="lesson-stack">
+          <section class="lesson" id="package" data-module>
+            <div class="lesson-header">
+              <span class="module-label">Part 1</span>
+              <div>
+                <h2>패키지 컨셉 도출</h2>
+                <p>제품을 다시 고르는 단계가 아니라, 제품 조합이 왜 한 세트인지 설명하는 단계입니다.</p>
+              </div>
+            </div>
+            <div class="lesson-body two-column">
+              <div class="input-panel">
+                <label>
+                  세트명
+                  <input data-field="setName" placeholder="예: 비우고 채우는 광채 케어 세트" />
+                </label>
+                <label>
+                  제품 구성
+                  <textarea data-field="products" placeholder="예: 클렌징폼 50ml + 카밍 로션 220ml"></textarea>
+                </label>
+                <label>
+                  루틴 해석
+                  <textarea data-field="routine" placeholder="예: 세안으로 비우고 장벽 보습으로 채우는 2-step 루틴"></textarea>
+                </label>
+                <label>
+                  패키지 역할
+                  <select data-field="packageRole">
+                    <option value="">선택하세요</option>
+                    <option>보호용</option>
+                    <option>선물용</option>
+                    <option>언박싱용</option>
+                    <option>진열용</option>
+                  </select>
+                </label>
+                <label>
+                  패키지 컨셉 한 문장
+                  <textarea data-field="packageConcept" placeholder="예: 제품 사용 순서가 열자마자 보이는 2-step 트레이 박스"></textarea>
+                </label>
+              </div>
+              <div class="guide-panel">
+                <h3>따라 하기</h3>
+                <ol>
+                  <li>제품 두 개가 함께 있어야 하는 이유를 씁니다.</li>
+                  <li>제품 기능보다 사용 순서를 먼저 적습니다.</li>
+                  <li>박스를 열었을 때 보여야 할 장면을 한 문장으로 만듭니다.</li>
+                </ol>
+                <div class="prompt-box">
+                  <span>AI 프롬프트</span>
+                  <p>이 제품 조합을 기능 설명이 아니라 소비자 루틴 관점의 세트 컨셉으로 10개 제안해줘.</p>
+                  <button type="button" data-copy="이 제품 조합을 기능 설명이 아니라 소비자 루틴 관점의 세트 컨셉으로 10개 제안해줘.">프롬프트 복사</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="lesson" id="goods" data-module>
+            <div class="lesson-header">
+              <span class="module-label">Part 2</span>
+              <div>
+                <h2>굿즈 컨셉 도출</h2>
+                <p>굿즈는 덤이 아니라 패키지를 열고 난 뒤 브랜드 경험을 일상에 남기는 물건입니다.</p>
+              </div>
+            </div>
+            <div class="lesson-body two-column reverse-mobile">
+              <figure class="inline-visual">
+                <img src="./assets/generated-goods-mockup.png" alt="루틴 카드, 헤어밴드, 손거울, 파우치 굿즈 목업" />
+              </figure>
+              <div class="input-panel">
+                <label>
+                  브랜드 한 문장
+                  <input data-field="brandSentence" placeholder="예: 성분에 솔직한 클린 스킨케어 브랜드" />
+                </label>
+                <label>
+                  핵심 키워드
+                  <input data-field="keywords" placeholder="예: 성분, 스킨 베리어, 속광, 진정" />
+                </label>
+                <label>
+                  타겟 사용 장면
+                  <textarea data-field="targetScene" placeholder="예: 아침 세안 루틴, 외출 전 피부 확인, 언박싱 기록"></textarea>
+                </label>
+                <label>
+                  최종 굿즈
+                  <input data-field="goods" placeholder="예: 루틴 카드 + 실리콘 헤어밴드" />
+                </label>
+                <label>
+                  선정 이유 한 문장
+                  <textarea data-field="goodsReason" placeholder="예: 세안 후 비우고 채우는 루틴을 바로 실행하게 만든다."></textarea>
+                </label>
+              </div>
+            </div>
+            <div class="prompt-row">
+              <div class="prompt-box compact">
+                <span>AI 프롬프트</span>
+                <p>온그리디언츠를 구매할 20대 여성의 하루에서 굿즈가 자연스럽게 쓰일 장면을 10개 제안해줘.</p>
+                <button type="button" data-copy="온그리디언츠를 구매할 20대 여성의 하루에서 굿즈가 자연스럽게 쓰일 장면을 10개 제안해줘.">프롬프트 복사</button>
+              </div>
+              <div class="prompt-box compact">
+                <span>AI 프롬프트</span>
+                <p>아래 굿즈 후보를 실용성, 브랜드 일치, SNS 노출 기준으로 평가하고 최종 후보만 남겨줘.</p>
+                <button type="button" data-copy="아래 굿즈 후보를 실용성, 브랜드 일치, SNS 노출 기준으로 평가하고 최종 후보만 남겨줘.">프롬프트 복사</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="lesson" id="validation" data-module>
+            <div class="lesson-header">
+              <span class="module-label">Part 3</span>
+              <div>
+                <h2>통합 패키징 검증</h2>
+                <p>패키지 컨셉과 굿즈 컨셉이 한 박스 안에서 같은 루틴을 말하는지 확인합니다.</p>
+              </div>
+            </div>
+            <div class="checklist" id="checklist">
+              <label><input type="checkbox" data-check="routine" /> 제품 사용 순서가 박스 안에서 보인다.</label>
+              <label><input type="checkbox" data-check="goodsConnection" /> 굿즈가 제품 루틴을 보조한다.</label>
+              <label><input type="checkbox" data-check="space" /> 제품, 여유 10mm, 굿즈, 트레이 공간이 함께 가능하다.</label>
+              <label><input type="checkbox" data-check="unboxing" /> 열었을 때 한 컷으로 설명된다.</label>
+              <label><input type="checkbox" data-check="brand" /> 성분, 장벽, 속광, 진정 같은 브랜드성이 보인다.</label>
+            </div>
+            <label class="wide-field">
+              보완점
+              <textarea data-field="improvement" placeholder="예: 헤어밴드 슬롯 폭을 줄이고 루틴 카드를 제품 위 플랫 카드로 배치한다."></textarea>
+            </label>
+            <div class="prompt-box">
+              <span>AI 프롬프트</span>
+              <p>아래 세트 기획안을 루틴 연결, 굿즈 연결, 공간 현실성, 언박싱성, 브랜드성 기준으로 5점 척도 평가하고 보완안을 제안해줘.</p>
+              <button type="button" data-copy="아래 세트 기획안을 루틴 연결, 굿즈 연결, 공간 현실성, 언박싱성, 브랜드성 기준으로 5점 척도 평가하고 보완안을 제안해줘.">프롬프트 복사</button>
+            </div>
+          </section>
+
+          <section class="lesson final-lesson" id="final">
+            <div class="lesson-header">
+              <span class="module-label">Output</span>
+              <div>
+                <h2>최종 제출안</h2>
+                <p>입력한 내용을 바탕으로 제출용 문장을 자동으로 정리합니다.</p>
+              </div>
+            </div>
+            <div class="final-card">
+              <pre id="finalOutput">아직 작성된 내용이 없습니다. Part 1부터 입력해보세요.</pre>
+              <div class="final-actions">
+                <button class="button primary" type="button" data-action="copy-final">최종안 복사</button>
+                <button class="button secondary" type="button" data-action="download">텍스트 저장</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
