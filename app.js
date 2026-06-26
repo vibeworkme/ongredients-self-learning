@@ -13,6 +13,98 @@ const state = {
   checks: {},
 };
 
+const exampleData = {
+  setName: "비우고 채우는 광채 케어 세트",
+  products: "클렌징폼 50ml + 카밍 로션 220ml",
+  routine: "아침 또는 저녁 세안 후, 클렌징폼으로 피부를 비우고 로션으로 장벽 보습을 채우는 루틴",
+  packageRole: "언박싱용",
+  packageConcept: "클렌징폼과 로션을 STEP 1, STEP 2로 세워 배치해 사용 순서가 열자마자 보이는 2-step 트레이 박스",
+  brandSentence: "성분에 솔직하고 피부 장벽을 편안하게 돌보는 클린 스킨케어 브랜드",
+  keywords: "성분, 스킨 베리어, 속광, 진정, 클린뷰티",
+  targetScene: "아침 세안 루틴, 외출 전 피부 확인, 언박싱 기록",
+  goods: "루틴 카드 + 실리콘 헤어밴드",
+  goodsReason: "세안할 때 바로 쓰이고, 루틴 카드가 제품 사용 순서를 쉽게 기억하게 해준다.",
+  improvement: "헤어밴드는 제품 측면 슬롯에 넣고, 루틴 카드는 제품 위에 얇게 올려 공간 부담을 줄인다.",
+};
+
+function fieldValue(key, fallback) {
+  return state.fields[key] || fallback;
+}
+
+function currentPlanText() {
+  return [
+    `세트명: ${fieldValue("setName", "아직 정하지 못함")}`,
+    `제품 구성: ${fieldValue("products", "아직 입력하지 않음")}`,
+    `사용 순서/루틴: ${fieldValue("routine", "아직 정하지 못함")}`,
+    `패키지 설명: ${fieldValue("packageConcept", "아직 정하지 못함")}`,
+    `브랜드 설명: ${fieldValue("brandSentence", "아직 정하지 못함")}`,
+    `키워드: ${fieldValue("keywords", "아직 입력하지 않음")}`,
+    `사용 장면: ${fieldValue("targetScene", "아직 정하지 못함")}`,
+    `굿즈: ${fieldValue("goods", "아직 정하지 못함")}`,
+    `굿즈 선정 이유: ${fieldValue("goodsReason", "아직 정하지 못함")}`,
+    `보완점: ${fieldValue("improvement", "아직 없음")}`,
+  ].join("\n");
+}
+
+function buildPrompt(type) {
+  const products = fieldValue("products", "[여기에 제품명과 용량을 적어주세요]");
+  const keywords = fieldValue("keywords", "[브랜드 키워드를 적어주세요. 예: 성분, 속광, 진정]");
+  const targetScene = fieldValue("targetScene", "[타겟이 제품을 쓰는 상황을 적어주세요]");
+
+  const prompts = {
+    package: `나는 화장품 기획 세트를 만들고 있어.
+제품 구성은 다음과 같아.
+${products}
+
+초보자도 이해할 수 있게 아래 형식으로 제안해줘.
+1. 세트명 5개
+2. 이 제품들이 왜 한 세트인지 쉬운 설명
+3. 소비자가 어떤 순서로 쓰는지
+4. 박스를 열었을 때 어떻게 배치하면 좋을지
+5. 패키지 컨셉 한 문장
+
+어려운 전문 용어는 피하고, 과제에 바로 붙여 넣을 수 있는 문장으로 써줘.`,
+    goods: `나는 화장품 기획 세트에 넣을 굿즈를 고르고 있어.
+제품 구성: ${products}
+브랜드 키워드: ${keywords}
+타겟 사용 장면: ${targetScene}
+
+초보자도 고를 수 있게 아래 형식으로 제안해줘.
+1. 굿즈 후보 10개
+2. 각 굿즈가 쓰이는 실제 장면
+3. 너무 비싸거나 제작이 어려워 보이는 후보 표시
+4. 최종 추천 굿즈 3개
+5. 추천 이유 한 문장
+
+사은품처럼 보이지만 제품 사용과 연결되는 아이디어를 우선해줘.`,
+    goodsFilter: `아래 굿즈 후보 중에서 실제로 쓸 만한 것만 남겨줘.
+
+현재 기획 내용:
+${currentPlanText()}
+
+평가 기준은 3가지야.
+1. 실제로 반복해서 쓸 것 같은가
+2. 제품 사용 장면과 연결되는가
+3. 언박싱 사진에서 보기 좋은가
+
+최종 후보 1개와 탈락 이유를 쉽게 정리해줘.`,
+    validation: `아래 세트 기획안을 초보자가 이해하기 쉽게 검토해줘.
+
+${currentPlanText()}
+
+다음 기준으로 봐줘.
+1. 박스를 열었을 때 제품 사용 순서가 보이는가
+2. 굿즈가 제품 사용을 도와주는가
+3. 제품과 굿즈가 한 박스 안에 들어갈 것 같은가
+4. 사진으로 찍었을 때 세트 느낌이 보이는가
+5. 브랜드 이미지와 어울리는가
+
+각 항목을 좋음/보완 필요로 표시하고, 마지막에 고쳐 쓸 최종 제출 문장 1개를 만들어줘.`,
+  };
+
+  return prompts[type] || "";
+}
+
 function showToast(message) {
   toast.textContent = message;
   toast.classList.add("is-visible");
@@ -64,7 +156,7 @@ function progressMessage(percent) {
 }
 
 function createFinalText() {
-  const get = (key, fallback) => state.fields[key] || fallback;
+  const get = fieldValue;
   const checked = checks.filter((check) => check.checked).length;
   const validationScore = `${checked}/5`;
 
@@ -128,13 +220,29 @@ document.addEventListener("change", (event) => {
 
 document.addEventListener("click", (event) => {
   const copyButton = event.target.closest("[data-copy]");
+  const promptButton = event.target.closest("[data-prompt]");
   const actionButton = event.target.closest("[data-action]");
 
   if (copyButton) {
     copyText(copyButton.dataset.copy).catch(() => showToast("복사 권한을 확인해주세요."));
   }
 
+  if (promptButton) {
+    copyText(buildPrompt(promptButton.dataset.prompt)).catch(() => showToast("복사 권한을 확인해주세요."));
+  }
+
   if (!actionButton) return;
+
+  if (actionButton.dataset.action === "fill-example") {
+    fields.forEach((field) => {
+      field.value = exampleData[field.dataset.field] || "";
+    });
+    checks.forEach((check) => {
+      check.checked = true;
+    });
+    saveState();
+    showToast("예시가 채워졌습니다. 문장을 바꿔보세요.");
+  }
 
   if (actionButton.dataset.action === "reset") {
     localStorage.removeItem(STORAGE_KEY);
